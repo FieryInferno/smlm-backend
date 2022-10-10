@@ -12,8 +12,10 @@ app.use(bodyParser.urlencoded({extended: true}));
 
 require('dotenv').config();
 
-const PORT = process.env.PORT || 3030;
+const PORT = process.env.NODE_PORT || 3030;
 
-app.listen(PORT, () => console.log(`Server is runnit on port ${PORT}`));
+app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
 
 app.get('/', (req, res) => res.status(200).send({message: 'Welcome'}));
+
+require('./routes/member')(app);
