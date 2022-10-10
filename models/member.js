@@ -7,8 +7,14 @@ module.exports = (sequelize, DataTypes) => {
   class Member extends Model {
     // eslint-disable-next-line require-jsdoc
     static associate(models) {
-      this.hasMany(models.Member, {foreignKey: 'parent'});
-      this.belongsTo(models.Member);
+      this.hasMany(models.Member, {
+        foreignKey: 'parent_id',
+        as: 'children',
+      });
+      this.belongsTo(models.Member, {
+        foreignKey: 'parent_id',
+        as: 'parent',
+      });
     }
   }
   Member.init({
@@ -17,8 +23,8 @@ module.exports = (sequelize, DataTypes) => {
       primaryKey: true,
       type: DataTypes.UUID,
     },
-    member_id: DataTypes.STRING,
-    parent: DataTypes.UUIDV4,
+    member: DataTypes.STRING,
+    parent_id: DataTypes.UUIDV4,
   }, {
     sequelize,
     modelName: 'Member',

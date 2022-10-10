@@ -9,22 +9,22 @@ module.exports = {
     const member = [
       {
         id: parent,
-        member_id: 'Member 1',
-        parent: null,
+        member: 'Member 1',
+        parent_id: null,
         createdAt: new Date(),
         updatedAt: new Date(),
       },
       {
         id: uuid.v4(),
-        member_id: 'Member 2',
-        parent: parent,
+        member: 'Member 2',
+        parent_id: parent,
         createdAt: new Date(),
         updatedAt: new Date(),
       },
       {
         id: uuid.v4(),
-        member_id: 'Member 3',
-        parent: parent,
+        member: 'Member 3',
+        parent_id: parent,
         createdAt: new Date(),
         updatedAt: new Date(),
       },

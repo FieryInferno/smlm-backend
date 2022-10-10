@@ -7,13 +7,15 @@ const {Member} = require('../models');
 
 const getAll = async (req, res) => {
   try {
-    data = await Member.findAndCountAll();
+    data = await Member.findAndCountAll({include: ['parent', 'children']});
     status = 'Success';
     message = 'Success';
+    code = 200;
   } catch (error) {
     data = {};
     status = 'Failed';
-    message = 'Failed';
+    message = error;
+    code = 400;
   } finally {
     return res.status(code).send({
       status,

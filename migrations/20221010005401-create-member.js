@@ -8,10 +8,10 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.UUID,
       },
-      member_id: {
+      member: {
         type: Sequelize.STRING,
       },
-      parent: {
+      parent_id: {
         type: Sequelize.UUID,
         references: {
           model: 'Members',
