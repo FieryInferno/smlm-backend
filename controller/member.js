@@ -38,13 +38,22 @@ const hierarchy = async (data) => {
   for (let index = 0; index < data.length; index++) {
     const element = data[index];
     const children = await Member.findAll({
-      where: {parent_id: element.id}});
+      where: {parent_id: element.id},
+    });
+
+    let bonus = 0;
 
     if (children) {
+      bonus += children.length * 1;
       children.children = await hierarchy(children);
+
+      children.forEach((child) => {
+        bonus += child.dataValues.children.length * 0.5;
+      });
     }
 
     data[index].dataValues.children = children;
+    data[index].dataValues.bonus = bonus;
   }
 
   return data;
