@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 let data;
 let code;
 let status;
@@ -12,7 +13,6 @@ const getAll = async (req, res) => {
     const {limit, filter} = req.query;
 
     data = await Member.findAndCountAll({
-      include: ['parent', 'children'],
       limit,
       where: filter ? {member: {[Op.iLike]: `%${filter}%`}} : '',
     });
@@ -21,7 +21,49 @@ const getAll = async (req, res) => {
     message = 'Success';
     code = 200;
   } catch (error) {
-    console.log(error);
+    data = {};
+    status = 'Failed';
+    message = error;
+    code = 400;
+  } finally {
+    return res.status(code).send({
+      status,
+      message,
+      data,
+    });
+  }
+};
+
+const hierarchy = async (data) => {
+  for (let index = 0; index < data.length; index++) {
+    const element = data[index];
+    const children = await Member.findAll({
+      where: {parent_id: element.id}});
+
+    if (children) {
+      children.children = await hierarchy(children);
+    }
+
+    data[index].dataValues.children = children;
+  }
+
+  return data;
+};
+
+const getAllParent = async (req, res) => {
+  try {
+    const dataMember = await Member.findAll({
+      where: {parent_id: null},
+    });
+
+    if (dataMember) {
+      data = await hierarchy(dataMember);
+    }
+
+    status = 'Success';
+    message = 'Success';
+    code = 200;
+  } catch (error) {
     data = {};
     status = 'Failed';
     message = error;
@@ -64,4 +106,4 @@ const create = async (req, res) => {
   }
 };
 
-module.exports = {getAll, create};
+module.exports = {getAll, create, getAllParent};

@@ -12,6 +12,7 @@ module.exports = (app) => {
   });
 
   app.get('/member', controller.getAll);
+  app.get('/parent', controller.getAllParent);
   app.post(
       '/member',
       body('member').notEmpty().withMessage('Member cannot be null'),
