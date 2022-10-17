@@ -162,4 +162,34 @@ const get = async (req, res) => {
   }
 };
 
-module.exports = {getAll, create, getAllParent, get};
+const migrate = async (req, res) => {
+  try {
+    const errors = validationResult(req);
+    const {id} = req.params;
+
+    if (!errors.isEmpty()) {
+      status = 'Bad Request';
+      message = errors;
+      code = 400;
+      data = {};
+    } else {
+      data = await Member.update({parent_id: req.body.parent_id}, {where: {id}});
+      status = 'Success';
+      message = 'Success';
+      code = 201;
+    }
+  } catch (error) {
+    data = {};
+    status = 'Failed';
+    message = error;
+    code = 400;
+  } finally {
+    return res.status(code).send({
+      status,
+      message,
+      data,
+    });
+  }
+};
+
+module.exports = {getAll, create, getAllParent, get, migrate};

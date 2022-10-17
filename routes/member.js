@@ -19,4 +19,10 @@ module.exports = (app) => {
       controller.create,
   );
   app.get('/member/:id', controller.get);
+  app.post(
+      '/member/:id/migrate',
+      body('id').notEmpty().withMessage('Member cannot be null'),
+      body('parent_id').notEmpty().withMessage('Parent ID cannot be null'),
+      controller.migrate,
+  );
 };
