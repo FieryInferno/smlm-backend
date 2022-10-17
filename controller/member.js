@@ -34,9 +34,8 @@ const getAll = async (req, res) => {
   }
 };
 
-const hierarchy = async (data) => {
-  for (let index = 0; index < data.length; index++) {
-    const element = data[index];
+const getChildAndBonus = async (element) => {
+  try {
     const children = await Member.findAll({
       where: {parent_id: element.id},
     });
@@ -48,15 +47,37 @@ const hierarchy = async (data) => {
       children.children = await hierarchy(children);
 
       children.forEach((child) => {
-        bonus += child.dataValues.children.length * 0.5;
+        bonus += child.dataValues.children?.length * 0.5;
       });
     }
 
-    data[index].dataValues.children = children;
-    data[index].dataValues.bonus = bonus;
+    return {children, bonus};
+  } catch (error) {
+    console.log(error);
   }
+};
 
-  return data;
+const hierarchy = async (data) => {
+  try {
+    if (Array.isArray(data)) {
+      for (let index = 0; index < data.length; index++) {
+        const element = data[index];
+        const {bonus, children} = await getChildAndBonus(element);
+
+        data[index].dataValues.children = children;
+        data[index].dataValues.bonus = bonus;
+      }
+    } else {
+      const {bonus, children} = await getChildAndBonus(data);
+
+      data.dataValues.children = children;
+      data.dataValues.bonus = bonus;
+    }
+
+    return data;
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 const getAllParent = async (req, res) => {
@@ -115,4 +136,30 @@ const create = async (req, res) => {
   }
 };
 
-module.exports = {getAll, create, getAllParent};
+const get = async (req, res) => {
+  try {
+    const {id} = req.params;
+    const dataMember = await Member.findByPk(id);
+
+    if (dataMember) {
+      data = await hierarchy(dataMember);
+    }
+
+    status = 'Success';
+    code = 200;
+    message = 'Success';
+  } catch (error) {
+    data = {};
+    code = 400;
+    message = error;
+    status = 'Failed';
+  } finally {
+    return res.status(code).send({
+      status,
+      message,
+      data,
+    });
+  }
+};
+
+module.exports = {getAll, create, getAllParent, get};

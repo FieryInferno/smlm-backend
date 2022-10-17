@@ -18,4 +18,5 @@ module.exports = (app) => {
       body('member').notEmpty().withMessage('Member cannot be null'),
       controller.create,
   );
+  app.get('/member/:id', controller.get);
 };
