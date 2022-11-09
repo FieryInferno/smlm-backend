@@ -1,5 +1,5 @@
 #!/bin/bash
-DIR="/home/ubuntu/be-calendar"
+DIR="/home/ubuntu/smlm-backend"
 if [ -d "$DIR" ]; then
   echo "${DIR} exists"
 else
